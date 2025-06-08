@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./backend
+    image: ghcr.io/mervin-njy/flight-plan-display/backend:latest
+    ports:
+      - "8888:8888"
+    env_file:
+      - ./backend/.env
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    image: ghcr.io/mervin-njy/flight-plan-display/frontend:latest
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

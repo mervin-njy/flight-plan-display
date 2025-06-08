@@ -22,6 +22,18 @@ export default function App() {
       .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    if (selectedCallsign) {
+      console.log(`Selected callsign: ${selectedCallsign}`);
+    }
+  }, [selectedCallsign]);
+
+  useEffect(() => {
+    if (hoveredAirway) {
+      console.log(`Hovered airway: ${hoveredAirway}`);
+    }
+  }, [hoveredAirway]);
+
   return (
     <div className="h-screen w-screen relative">
       <MapViewer
