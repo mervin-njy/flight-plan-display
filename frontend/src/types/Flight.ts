@@ -1,3 +1,5 @@
+import type { Waypoint } from "./Airway";
+
 export interface Flight {
   _id: string;
   messageType: string; // Type of message (e.g., "FPL" for flight plan)
@@ -80,4 +82,8 @@ export interface Arrival {
 export interface Enroute {
   alternativeEnRouteAerodrome: string;
   currentModeACode: string;
+}
+
+export interface FlightRoute {
+  waypoints: Waypoint[];
 }

@@ -1,4 +1,4 @@
-// flight-manager/displayAll
+import type { Waypoint } from "./Airway";
 
 export interface Flight {
   _id: string;
@@ -82,4 +82,8 @@ export interface Arrival {
 export interface Enroute {
   alternativeEnRouteAerodrome: string;
   currentModeACode: string;
+}
+
+export interface FlightRoute {
+  waypoints: Waypoint[];
 }

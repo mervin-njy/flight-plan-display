@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from "express";
 import { fetchFlights } from "../services/flightManager";
 import { Flight } from "../models/Flight";
+import { Waypoint } from "../models/Airway";
+import { getRouteElementsByCallsign } from "../services/routeService";
 
 const router = express.Router();
 
@@ -60,6 +62,22 @@ router.get(
       }
       res.json(filtered);
     } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  "/callsign/:cs/routeElements",
+  async (
+    req: Request<paramCallsign>,
+    res: Response<{ waypoints: Waypoint[] }>,
+    next: NextFunction
+  ) => {
+    try {
+      const waypoints = await getRouteElementsByCallsign(req.params.cs);
+      res.json({ waypoints });
+    } catch (err: any) {
       next(err);
     }
   }

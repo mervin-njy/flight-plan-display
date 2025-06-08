@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { Flight } from "../types/Flight";
-import type { Airway } from "../types/Airway";
+import type { Airway, Waypoint } from "../types/Airway";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8888/api",
@@ -34,6 +34,18 @@ export const getFlightsByCallsign = async (
     return res.data;
   } catch (err) {
     console.error(`Error fetching flights with callsign ${callsign}`, err);
+    return [];
+  }
+};
+
+export const getFlightRouteByCallsign = async (
+  callsign: string
+): Promise<Waypoint[]> => {
+  try {
+    const res = await api.get(`/flights/callsign/${callsign}/routeElements`);
+    return res.data.waypoints;
+  } catch (err) {
+    console.error(`Error fetching flight route for callsign ${callsign}`, err);
     return [];
   }
 };

@@ -17,7 +17,7 @@ export default function MapControls({
   onHoverAirway,
 }: Props) {
   return (
-    <div className="absolute top-4 left-4 z-1 bg-base-100 p-4 rounded shadow w-[350px] space-y-4">
+    <div className="absolute top-4 left-4 z-1 bg-base-100 opacity-70 p-4 rounded shadow w-[350px] space-y-4">
       <AirwayListings airways={airways} onHover={onHoverAirway} />
       <CallsignSearch flights={flights} onSelect={onSelectCallsign} />
     </div>
