@@ -8,9 +8,14 @@ type paramID = { id: string };
 type paramCallsign = { cs: string };
 
 // GET /api/flights
-router.get("/", async (_req, res, next) => {
+router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    const flights = await fetchFlights();
+    const flights: Flight[] | undefined = await fetchFlights();
+
+    if (!flights || flights.length === 0) {
+      res.status(404).json({ error: "No flights found" });
+      return;
+    }
     res.json(flights);
   } catch (err) {
     next(err);

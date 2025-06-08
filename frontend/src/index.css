@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --color-grey-100: #dfe6e9;
+  --color-grey-200: #b2bec3;
+  --color-grey-300: #2d3436;
+  --color-purple-100: #a29bfe;
+  --color-purple-200: #877cf3;
+  --color-purple-300: #6c5ce7;
+  --color-citrus-100: #ffeaa7;
+  --color-citrus-200: #fdcb6e;
+  --color-citrus-300: #e17055;
+  --color-red-100: #fd79a8;
+  --color-red-200: #ff7675;
+  --color-red-300: #d63031;
+  --color-green-100: #55efc4;
+  --color-green-200: #00b894;
+  --color-green-300: #036e59;
+}

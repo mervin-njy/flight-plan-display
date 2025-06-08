@@ -7,6 +7,21 @@ const api = axios.create({
 });
 
 export async function fetchFlights(): Promise<Flight[]> {
-  const { data } = await api.get<Flight[]>("/flight-manager/displayAll");
-  return data;
+  try {
+    const { data } = await api.get<Flight[]>("/flight-manager/displayAll");
+    return data;
+  } catch (err: any) {
+    console.error("Upstream API failed:", err?.response?.data || err);
+    throw err;
+  }
+}
+
+export async function fetchAirways(): Promise<string[]> {
+  try {
+    const { data } = await api.get<string[]>("/geopoints/list/airways");
+    return data;
+  } catch (err: any) {
+    console.error("Upstream API failed:", err?.response?.data || err);
+    throw err;
+  }
 }
