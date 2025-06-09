@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   getFlights,
   getAirways,
-  getFlightRouteByCallsign,
+  getFlightRouteById,
 } from "./services/flightManager";
 import type { Flight } from "./types/Flight";
 import type { Airway, Waypoint } from "./types/Airway";
@@ -14,7 +14,7 @@ export default function App() {
   const [flights, setFlights] = useState<Flight[]>([]);
   const [flightRoute, setFlightRoute] = useState<Waypoint[]>([]);
   const [airways, setAirways] = useState<Airway[]>([]);
-  const [selectedCallsign, setSelectedCallsign] = useState<string | null>(null);
+  const [selectedFlightId, setSelectedFlightId] = useState<string | null>(null);
   const [hoveredAirway, setHoveredAirway] = useState<string | null>(null);
 
   // ===== Effects =====
@@ -30,10 +30,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (selectedCallsign) {
-      console.log(`Selected callsign: ${selectedCallsign}`);
+    if (selectedFlightId) {
+      console.log(`Selected a flight by ID.`);
     }
-  }, [selectedCallsign]);
+  }, [selectedFlightId]);
 
   useEffect(() => {
     if (hoveredAirway) {
@@ -42,12 +42,9 @@ export default function App() {
   }, [hoveredAirway]);
 
   // ===== Event Handlers =====
-  const handleSelectCallsign = (callsign: string) => {
-    setSelectedCallsign(callsign);
-
-    getFlightRouteByCallsign(callsign)
-      .then(setFlightRoute)
-      .catch(console.error);
+  const handleSelectFlightId = (flightId: string) => {
+    setSelectedFlightId(flightId);
+    getFlightRouteById(flightId).then(setFlightRoute).catch(console.error);
   };
 
   return (
@@ -58,10 +55,13 @@ export default function App() {
         // selectedCallsign={selectedCallsign}
         // hoveredAirway={hoveredAirway}
       />
+
       <MapControls
         flights={flights}
+        selectedFlightId={selectedFlightId}
+        flightRoute={flightRoute}
         airways={airways}
-        onSelectCallsign={handleSelectCallsign}
+        onSelectFlightId={handleSelectFlightId}
         onHoverAirway={setHoveredAirway}
       />
     </div>

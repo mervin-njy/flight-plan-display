@@ -6,8 +6,8 @@ export interface Airway {
 export interface Waypoint {
   designatedPoint: string;
   type: string;
-  lat: number;
-  lon: number;
+  lat: number | null;
+  lon: number | null;
   seqNum?: number;
   airway?: string;
   airwayType?: string;

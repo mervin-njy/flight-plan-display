@@ -7,9 +7,9 @@ interface Props {
 
 export default function AirwayListings({ airways, onHover }: Props) {
   return (
-    <div>
-      <h3 className="font-semibold mb-1">Airways</h3>
-      <ul className="menu rounded-box max-h-40 overflow-y-auto">
+    <div className="bg-base-100 mb-5">
+      <h3 className="font-semibold">Airways</h3>
+      <ul className="menu rounded-box max-h-20 md:max-h-28 overflow-y-auto">
         {airways.map((aw) => (
           <li key={aw.id}>
             <a

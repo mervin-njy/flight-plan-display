@@ -38,14 +38,12 @@ export const getFlightsByCallsign = async (
   }
 };
 
-export const getFlightRouteByCallsign = async (
-  callsign: string
-): Promise<Waypoint[]> => {
+export const getFlightRouteById = async (id: string): Promise<Waypoint[]> => {
   try {
-    const res = await api.get(`/flights/callsign/${callsign}/routeElements`);
+    const res = await api.get(`/flights/id/${id}/routeElements`);
     return res.data.waypoints;
   } catch (err) {
-    console.error(`Error fetching flight route for callsign ${callsign}`, err);
+    console.error(`Error fetching flight route by flight id`, err);
     return [];
   }
 };

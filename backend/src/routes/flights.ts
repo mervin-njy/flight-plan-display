@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import { fetchFlights } from "../services/flightManager";
 import { Flight } from "../models/Flight";
 import { Waypoint } from "../models/Airway";
-import { getRouteElementsByCallsign } from "../services/routeService";
+import { getRouteElementsById } from "../services/routeService";
 
 const router = express.Router();
 
@@ -68,14 +68,14 @@ router.get(
 );
 
 router.get(
-  "/callsign/:cs/routeElements",
+  "/id/:id/routeElements",
   async (
-    req: Request<paramCallsign>,
+    req: Request<paramID>,
     res: Response<{ waypoints: Waypoint[] }>,
     next: NextFunction
   ) => {
     try {
-      const waypoints = await getRouteElementsByCallsign(req.params.cs);
+      const waypoints = await getRouteElementsById(req.params.id);
       res.json({ waypoints });
     } catch (err: any) {
       next(err);
