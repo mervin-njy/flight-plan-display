@@ -1,8 +1,9 @@
 import express, { Request, Response, NextFunction } from "express";
 import { fetchFlights } from "../services/flightManager";
 import { Flight } from "../models/Flight";
-import { Waypoint } from "../models/Airway";
+import { TransitCoords, Waypoint } from "../models/Airway";
 import { getRouteElementsById } from "../services/routeService";
+import { getDepartureArrivalCoordsById } from "../services/airportService";
 
 const router = express.Router();
 
@@ -75,9 +76,28 @@ router.get(
     next: NextFunction
   ) => {
     try {
-      const waypoints = await getRouteElementsById(req.params.id);
+      const waypoints: Waypoint[] = await getRouteElementsById(req.params.id);
       res.json({ waypoints });
     } catch (err: any) {
+      next(err);
+    }
+  }
+);
+
+router.get(
+  "/id/:id/transitCoords",
+  async (req: Request<paramID>, res: Response, next: NextFunction) => {
+    try {
+      const transitCoords: TransitCoords | null =
+        await getDepartureArrivalCoordsById(req.params.id);
+      if (!transitCoords?.departure || !transitCoords?.arrival) {
+        res
+          .status(404)
+          .json({ error: "Flight transit information not found." });
+        return;
+      }
+      res.json(transitCoords);
+    } catch (err) {
       next(err);
     }
   }

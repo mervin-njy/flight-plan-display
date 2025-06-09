@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { Flight } from "../types/Flight";
-import type { Airway, Waypoint } from "../types/Airway";
+import type { Airway, Waypoint, TransitCoords } from "../types/Airway";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8888/api",
@@ -45,6 +45,18 @@ export const getFlightRouteById = async (id: string): Promise<Waypoint[]> => {
   } catch (err) {
     console.error(`Error fetching flight route by flight id`, err);
     return [];
+  }
+};
+
+export const getTransitCoordsByID = async (
+  id: string
+): Promise<TransitCoords | null> => {
+  try {
+    const res = await api.get(`/flights/id/${id}/transitCoords`);
+    return res.data;
+  } catch (err) {
+    console.error(`Error fetching transit coordinates for flight id`, err);
+    return null;
   }
 };
 

@@ -3,9 +3,10 @@ import {
   getFlights,
   getAirways,
   getFlightRouteById,
+  getTransitCoordsByID,
 } from "./services/flightManager";
 import type { Flight } from "./types/Flight";
-import type { Airway, Waypoint } from "./types/Airway";
+import type { Airway, Waypoint, TransitCoords } from "./types/Airway";
 import MapViewer from "./components/MapViewer";
 import MapControls from "./components/MapControls/MapControls";
 
@@ -13,6 +14,9 @@ export default function App() {
   // ===== State Management =====
   const [flights, setFlights] = useState<Flight[]>([]);
   const [flightRoute, setFlightRoute] = useState<Waypoint[]>([]);
+  const [transitCoords, setTransitCoords] = useState<TransitCoords | null>(
+    null
+  );
   const [airways, setAirways] = useState<Airway[]>([]);
   const [selectedFlightId, setSelectedFlightId] = useState<string | null>(null);
   const [hoveredAirway, setHoveredAirway] = useState<string | null>(null);
@@ -30,12 +34,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (selectedFlightId) {
-      console.log(`Selected a flight by ID.`);
-    }
-  }, [selectedFlightId]);
-
-  useEffect(() => {
     if (hoveredAirway) {
       console.log(`Hovered airway: ${hoveredAirway}`);
     }
@@ -45,16 +43,12 @@ export default function App() {
   const handleSelectFlightId = (flightId: string) => {
     setSelectedFlightId(flightId);
     getFlightRouteById(flightId).then(setFlightRoute).catch(console.error);
+    getTransitCoordsByID(flightId).then(setTransitCoords).catch(console.error);
   };
 
   return (
     <div className="h-screen w-screen relative">
-      <MapViewer
-        flightRoute={flightRoute}
-        // airways={airways}
-        // selectedCallsign={selectedCallsign}
-        // hoveredAirway={hoveredAirway}
-      />
+      <MapViewer flightRoute={flightRoute} transitCoords={transitCoords} />
 
       <MapControls
         flights={flights}

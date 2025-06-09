@@ -4,8 +4,9 @@ import {
   Polyline,
   CircleMarker,
   Popup,
+  Tooltip,
 } from "react-leaflet";
-import type { Waypoint } from "../types/Airway";
+import type { Waypoint, TransitCoords } from "../types/Airway";
 import type { LatLngBoundsExpression, LatLngExpression } from "leaflet";
 
 const center: LatLngExpression = [1.3586, 103.9899];
@@ -16,13 +17,25 @@ const maxBounds: LatLngBoundsExpression = [
 
 interface Props {
   flightRoute: Waypoint[];
+  transitCoords: TransitCoords | null;
 }
-//{ flights, selectedCallsign }: Props
-export default function MapViewer({ flightRoute }: Props) {
+export default function MapViewer({ flightRoute, transitCoords }: Props) {
   // ===== Variables =====
   const positions: LatLngBoundsExpression = flightRoute
     .filter((wp) => wp.lat !== null && wp.lon !== null)
     .map((wp) => [wp.lat!, wp.lon!] as [number, number]);
+
+  const first = positions[0];
+  const last = positions[positions.length - 1];
+
+  const canRenderDep =
+    transitCoords !== null &&
+    transitCoords?.departure?.lat !== null &&
+    transitCoords?.departure?.lon !== null;
+  const canRenderArr =
+    transitCoords !== null &&
+    transitCoords?.arrival?.lat !== null &&
+    transitCoords?.arrival?.lon !== null;
 
   return (
     <MapContainer
@@ -40,7 +53,7 @@ export default function MapViewer({ flightRoute }: Props) {
         attribution='&copy; <a href="https://openstreetmap.org">OpenStreetMap</a>'
       />
 
-      {/* TODO: Add polyline rendering here based on selectedCallsign */}
+      {/* Main route polyline */}
       {positions.length >= 2 && (
         <Polyline
           positions={positions}
@@ -48,6 +61,7 @@ export default function MapViewer({ flightRoute }: Props) {
         />
       )}
 
+      {/* Main Route markers */}
       {flightRoute
         .filter((wp) => wp.lat !== null && wp.lon !== null)
         .map((wp, index) => (
@@ -62,17 +76,118 @@ export default function MapViewer({ flightRoute }: Props) {
               weight: 1.5,
             }}
           >
+            {wp.seqNum != null && wp.seqNum >= 0 && (
+              <Tooltip direction="top" offset={[0, -8]}>
+                <span className="text-xs font-semibold">
+                  {wp.seqNum + 1} | {wp.designatedPoint}
+                </span>
+              </Tooltip>
+            )}
+
             <Popup>
               <div className="text-sm">
-                <strong>{wp.designatedPoint}</strong>
-                <p>Airway: {wp.airway || "N/A"}</p>
-                <p>Type: {wp.type}</p>
-                <p>LAT: {wp.lat!.toFixed(4)}</p>
-                <p>LON: {wp.lon!.toFixed(4)}</p>
+                <strong className="h-8">
+                  {wp.seqNum != null ? `${wp.seqNum + 1}` : "—"} |{" "}
+                  {wp.designatedPoint}
+                </strong>
+                <div className="flex flex-auto items-start space-x-2 h-6">
+                  <p className="font-semibold text-xs w-14">AIRWAY</p>
+                  <p className="font-light text-xs w-14">{wp.airway || "—"}</p>
+
+                  <p className="font-semibold text-xs w-10">LAT</p>
+                  <p className="font-light text-xs w-14">
+                    {wp.lat!.toFixed(4)}
+                  </p>
+                </div>
+                <div className="flex flex-auto items-start space-x-2 h-8">
+                  <p className="font-semibold text-xs w-14">TYPE</p>
+                  <p className="font-light text-xs w-14">{wp.type}</p>
+
+                  <p className="font-semibold text-xs w-10">LON</p>
+                  <p className="font-light text-xs w-14">
+                    {wp.lon!.toFixed(4)}
+                  </p>
+                </div>
               </div>
             </Popup>
           </CircleMarker>
         ))}
+
+      {/* Departure marker and line */}
+      {canRenderDep && (
+        <>
+          <CircleMarker
+            center={[
+              transitCoords?.departure?.lat!,
+              transitCoords?.departure?.lon!,
+            ]}
+            radius={5}
+            pathOptions={{
+              color: "#2d3436",
+              fillColor: "#fd79a8",
+              fillOpacity: 0.9,
+              weight: 1.5,
+            }}
+          >
+            <Popup>
+              Departure: {transitCoords?.departure?.designatedPoint}
+            </Popup>
+          </CircleMarker>
+          {positions.length > 0 && (
+            <Polyline
+              positions={[
+                [
+                  transitCoords?.departure?.lat!,
+                  transitCoords?.departure?.lon!,
+                ],
+                first,
+              ]}
+              pathOptions={{ color: "#fd79a8", weight: 1.5, dashArray: "4,4" }}
+            />
+          )}
+        </>
+      )}
+
+      {/* Arrival marker and line */}
+      {canRenderArr && (
+        <>
+          <CircleMarker
+            center={[
+              transitCoords?.arrival?.lat!,
+              transitCoords?.arrival?.lon!,
+            ]}
+            radius={5}
+            pathOptions={{
+              color: "#2d3436",
+              fillColor: "#00b894",
+              fillOpacity: 0.9,
+              weight: 1.5,
+            }}
+          >
+            <Popup>Arrival: {transitCoords?.arrival?.designatedPoint}</Popup>
+          </CircleMarker>
+          {positions.length > 0 && (
+            <Polyline
+              positions={[
+                last,
+                [transitCoords?.arrival?.lat!, transitCoords?.arrival?.lon!],
+              ]}
+              pathOptions={{ color: "#00b894", weight: 1.5, dashArray: "4,4" }}
+            />
+          )}
+        </>
+      )}
+
+      {/* If no waypoints, draw straight line */}
+      {positions.length === 0 && canRenderDep && canRenderArr && (
+        <Polyline
+          positions={[
+            [transitCoords?.departure?.lat!, transitCoords?.departure?.lon!],
+            [transitCoords?.arrival?.lat!, transitCoords?.arrival?.lon!],
+          ]}
+          pathOptions={{ color: "#2d3436", weight: 1.5, dashArray: "4,4" }}
+        />
+      )}
     </MapContainer>
   );
 }

@@ -14,3 +14,8 @@ export interface Waypoint {
   changeLevel?: string;
   changeSpeed?: string;
 }
+
+export interface TransitCoords {
+  departure: Waypoint | null;
+  arrival: Waypoint | null;
+}
