@@ -4,12 +4,13 @@ import CallsignSearch from "./CallsignSearch";
 import FlightInstanceTabs from "./FlightInstanceTabs";
 import FlightRouteDetailsTable from "./FlightRouteDetailsTable";
 import type { Flight } from "../../types/Flight";
-import type { Airway, Waypoint } from "../../types/Airway";
+import type { Airway, Waypoint, TransitCoords } from "../../types/Airway";
 
 interface Props {
   flights: Flight[];
   selectedFlightId: string | null;
   flightRoute: Waypoint[];
+  transitCoords: TransitCoords | null;
   airways: Airway[];
   onSelectFlightId: (id: string) => void;
   onHoverAirway: (airwayId: string | null) => void;
@@ -19,6 +20,7 @@ export default function MapControls({
   flights,
   selectedFlightId,
   flightRoute,
+  transitCoords,
   airways,
   onSelectFlightId,
   onHoverAirway,
@@ -31,7 +33,7 @@ export default function MapControls({
     : [];
 
   return (
-    <div className="absolute top-4 left-4 right-4 md:bottom-4 z-10 bg-base-100 rounded-xl shadow flex flex-col py-2 px-4 md:p-5 max-w-[calc(100vh-2rem)] md:w-[25rem] max-h-[calc(25vh)] md:max-h-[calc(100vh-2rem)] opacity-95 overflow-auto">
+    <div className="absolute top-4 left-4 right-4 md:bottom-4 z-10 bg-base-100 rounded-xl shadow flex flex-col py-2 px-4 md:p-5 max-w-[calc(100vh-2rem)] md:w-[30rem] max-h-[calc(25vh)] md:max-h-[calc(100vh-2rem)] opacity-95 overflow-auto">
       <div className="flex flex-col gap-2">
         <AirwayListings airways={airways} onHover={onHoverAirway} />
 
@@ -55,7 +57,10 @@ export default function MapControls({
           )}
         </div>
 
-        {flightRoute && <FlightRouteDetailsTable waypoints={flightRoute} />}
+        <FlightRouteDetailsTable
+          waypoints={flightRoute}
+          transitCoords={transitCoords}
+        />
       </div>
     </div>
   );

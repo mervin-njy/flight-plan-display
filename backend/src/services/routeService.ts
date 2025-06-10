@@ -1,4 +1,5 @@
 import axios from "axios";
+import { fixesLookup, navaidsLookup, getCachedGeopoint } from "./geopointCache";
 import { fetchFlights } from "./flightManager";
 import { Flight, RouteElement } from "../models/Flight";
 import { Waypoint } from "../models/Airway";
@@ -8,32 +9,44 @@ const api = axios.create({
   headers: { apikey: process.env.API_KEY },
 });
 
+const coordinateCache: Record<string, string[]> = {};
+
 async function resolveCoordinates(
   code: string,
   type: "fixes" | "navaids"
 ): Promise<string[]> {
-  try {
-    const existsRes = await api.get<boolean>(
-      `/geopoints/exist/${type}/${code}`
-    );
-    if (!existsRes.data) {
-      return [];
-    }
-  } catch (err) {
-    console.warn(
-      `Error checking existence for ${code} in ${type}:`,
-      (err as any).message
-    );
-    return [];
-  }
+  const key = `${type}:${code}`;
+  if (coordinateCache[key]) return coordinateCache[key]; // in-memory deduplication
 
   try {
-    const searchRes = await api.get<string[]>(
-      `/geopoints/search/${type}/${code}`
-    );
-    return searchRes.data;
+    const res = await api.get<string[]>(`/geopoints/search/${type}/${code}`);
+    coordinateCache[key] = res.data;
+
+    // Parse and add to structured lookup cache
+    const match = res.data.find((entry) => entry.startsWith(`${code} `));
+    if (match) {
+      const coordsMatch = match.match(/\(([-\d.]+),\s*([-\d.]+)\)/);
+      if (coordsMatch) {
+        const lat = parseFloat(coordsMatch[1]);
+        const lon = parseFloat(coordsMatch[2]);
+
+        const wp: Waypoint = {
+          designatedPoint: code,
+          lat,
+          lon,
+          type,
+          seqNum: 0,
+        };
+
+        if (type === "fixes") fixesLookup[code] = wp;
+        else navaidsLookup[code] = wp;
+      }
+    }
+
+    return res.data;
   } catch (err) {
-    console.warn(`Search for ${code} in ${type} failed:`, (err as any).message);
+    console.warn(`Error resolving ${type} ${code}:`, (err as any).message);
+    coordinateCache[key] = []; // avoid retry flood
     return [];
   }
 }
@@ -63,13 +76,21 @@ export async function getRouteElementsById(id: string): Promise<Waypoint[]> {
     // !code may refer to SID & STAR procedures, which we will still include in the returned waypoints
     if (code) {
       const type = code.length < 4 ? "navaids" : "fixes";
-      const rawList = await resolveCoordinates(code, type);
-      const match = rawList.find((entry) => entry.startsWith(`${code} `));
-      if (match) {
-        const coordsMatch = match.match(/\(([-\d.]+),\s*([-\d.]+)\)/);
-        if (coordsMatch) {
-          lat = parseFloat(coordsMatch[1]);
-          lon = parseFloat(coordsMatch[2]);
+      const cached = getCachedGeopoint(code, type);
+      // Check if coordinates are cached
+      if (cached) {
+        lat = cached.lat;
+        lon = cached.lon;
+      } else {
+        // If not found in cache, resolve coordinates from API
+        const rawList = await resolveCoordinates(code, type);
+        const match = rawList.find((entry) => entry.startsWith(`${code} `));
+        if (match) {
+          const coordsMatch = match.match(/\(([-\d.]+),\s*([-\d.]+)\)/);
+          if (coordsMatch) {
+            lat = parseFloat(coordsMatch[1]);
+            lon = parseFloat(coordsMatch[2]);
+          }
         }
       }
     }

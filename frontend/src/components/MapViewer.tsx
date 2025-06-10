@@ -130,7 +130,7 @@ export default function MapViewer({ flightRoute, transitCoords }: Props) {
             }}
           >
             <Popup>
-              Departure: {transitCoords?.departure?.designatedPoint}
+              <strong>DEP | {transitCoords?.departure?.designatedPoint}</strong>
             </Popup>
           </CircleMarker>
           {positions.length > 0 && (
@@ -164,7 +164,9 @@ export default function MapViewer({ flightRoute, transitCoords }: Props) {
               weight: 1.5,
             }}
           >
-            <Popup>Arrival: {transitCoords?.arrival?.designatedPoint}</Popup>
+            <Popup>
+              <strong>ARR | {transitCoords?.arrival?.designatedPoint}</strong>
+            </Popup>
           </CircleMarker>
           {positions.length > 0 && (
             <Polyline

@@ -54,6 +54,7 @@ export default function App() {
         flights={flights}
         selectedFlightId={selectedFlightId}
         flightRoute={flightRoute}
+        transitCoords={transitCoords}
         airways={airways}
         onSelectFlightId={handleSelectFlightId}
         onHoverAirway={setHoveredAirway}
