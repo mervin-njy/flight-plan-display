@@ -1,9 +1,8 @@
-import { airportsLookup, getCachedAirport } from "./geopointCache";
+import { getResolvedAirportCandidate } from "./geopointCache";
 import axios from "axios";
 import { fetchFlights } from "./flightManager";
 import { Flight } from "../models/Flight";
-import { Waypoint } from "../models/Airway";
-import { TransitCoords } from "../models/Airway";
+import { Waypoint, TransitCoords } from "../models/Airway";
 
 const api = axios.create({
   baseURL: process.env.API_URI,
@@ -17,14 +16,11 @@ export async function resolveAirportCoordinates(
 ): Promise<Waypoint | null> {
   if (!code) return null;
 
-  // Step 1: Check main structured cache
-  const cached = getCachedAirport(code);
+  const cached = getResolvedAirportCandidate(code, null);
   if (cached) return cached;
 
-  // Step 2: Check short-term memory cache
   if (code in airportCache) return airportCache[code];
 
-  // Step 3: Fallback to direct query
   try {
     const result = await api.get<string[]>(
       `/geopoints/search/airports/${code}`
@@ -41,8 +37,7 @@ export async function resolveAirportCoordinates(
           lon: parseFloat(coordsMatch[2]),
         };
 
-        // ✅ Store in both lookup + dedup cache
-        airportsLookup[code] = waypoint;
+        // Store as an array in cache (if not already populated via init)
         airportCache[code] = waypoint;
         return waypoint;
       }
@@ -51,7 +46,6 @@ export async function resolveAirportCoordinates(
     console.warn(`Error fetching airport ${code}:`, (err as any).message);
   }
 
-  // ✅ Cache null to prevent retry spam
   airportCache[code] = null;
   return null;
 }

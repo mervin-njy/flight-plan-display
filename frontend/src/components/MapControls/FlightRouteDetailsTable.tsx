@@ -28,10 +28,14 @@ export default function FlightRouteDetailsTable({
           </thead>
           <tbody>
             {/* DEP row */}
-            <tr className="hover text-red-100">
-              <td>DEP</td>
-              <td>{transitCoords?.departure?.designatedPoint || "—"}</td>
-              <td>{transitCoords?.departure?.type || "—"}</td>
+            <tr className="hover">
+              <td className="text-red-100">DEP</td>
+              <td className="text-red-100">
+                {transitCoords?.departure?.designatedPoint || "—"}
+              </td>
+              <td className="text-red-100">
+                {transitCoords?.departure?.type || "—"}
+              </td>
               <td className="font-mono text-xs">
                 {transitCoords?.departure?.lat !== null
                   ? transitCoords?.departure?.lat.toFixed(4)
@@ -59,7 +63,9 @@ export default function FlightRouteDetailsTable({
                 <tr key={`${wp.designatedPoint}-${i}`} className="hover">
                   <td>{i + 1}</td>
                   <td>{wp.designatedPoint || "—"}</td>
-                  <td>{wp.type || "—"}</td>
+                  <td className={`${wp.type == "navaid" && "text-citrus-200"}`}>
+                    {wp.type || "—"}
+                  </td>
                   <td className="font-mono text-xs">
                     {wp.lat !== null ? wp.lat.toFixed(4) : "—"}
                   </td>
@@ -74,10 +80,14 @@ export default function FlightRouteDetailsTable({
             )}
 
             {/* ARR row */}
-            <tr className="hover text-green-100">
-              <td>ARR</td>
-              <td>{transitCoords?.arrival?.designatedPoint || "—"}</td>
-              <td>{transitCoords?.arrival?.type || "—"}</td>
+            <tr className="hover">
+              <td className="text-green-100">ARR</td>
+              <td className="text-green-100">
+                {transitCoords?.arrival?.designatedPoint || "—"}
+              </td>
+              <td className="text-green-100">
+                {transitCoords?.arrival?.type || "—"}
+              </td>
               <td className="font-mono text-xs">
                 {transitCoords?.arrival?.lat !== null
                   ? transitCoords?.arrival?.lat.toFixed(4)

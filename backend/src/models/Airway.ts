@@ -19,3 +19,5 @@ export interface TransitCoords {
   departure: Waypoint | null;
   arrival: Waypoint | null;
 }
+
+export type Coord = { lat: number | null; lon: number | null };

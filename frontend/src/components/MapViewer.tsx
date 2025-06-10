@@ -20,7 +20,7 @@ interface Props {
   transitCoords: TransitCoords | null;
 }
 export default function MapViewer({ flightRoute, transitCoords }: Props) {
-  // ===== Variables =====
+  // ===== DEP & ARR =====
   const positions: LatLngBoundsExpression = flightRoute
     .filter((wp) => wp.lat !== null && wp.lon !== null)
     .map((wp) => [wp.lat!, wp.lon!] as [number, number]);
@@ -71,7 +71,7 @@ export default function MapViewer({ flightRoute, transitCoords }: Props) {
             radius={4}
             pathOptions={{
               color: "#2d3436",
-              fillColor: "#a29bfe",
+              fillColor: `${wp.type === "fix" ? "#a29bfe" : "#fdcb6e"}`,
               fillOpacity: 0.8,
               weight: 1.5,
             }}
