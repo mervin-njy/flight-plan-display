@@ -9,6 +9,13 @@ export default function FlightRouteDetailsTable({
   waypoints,
   transitCoords,
 }: Props) {
+  function getWaypointColour(type: string): string {
+    if (type === "navaid") return "text-citrus-100";
+    if (type === "fix") return "text-lavender-100";
+    if (type === "airport") return "text-green-200";
+    return "text-gray-300";
+  }
+
   return (
     <div className="mt-2">
       <h3 className="text-sm font-semibold mb-1">Flight Route Details</h3>
@@ -63,7 +70,7 @@ export default function FlightRouteDetailsTable({
                 <tr key={`${wp.designatedPoint}-${i}`} className="hover">
                   <td>{i + 1}</td>
                   <td>{wp.designatedPoint || "—"}</td>
-                  <td className={`${wp.type == "navaid" && "text-citrus-200"}`}>
+                  <td className={`${getWaypointColour(wp.type)}`}>
                     {wp.type || "—"}
                   </td>
                   <td className="font-mono text-xs">

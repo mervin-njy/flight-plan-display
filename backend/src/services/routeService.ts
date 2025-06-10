@@ -64,9 +64,11 @@ export async function getRouteElementsById(id: string): Promise<Waypoint[]> {
       }
     }
 
+    const displayType = type === "navaids" ? "navaid" : "fix";
+
     waypoints.push({
       designatedPoint: code || "",
-      type: type || "unknown",
+      type: displayType || "unknown",
       seqNum: elem.seqNum,
       lat,
       lon,

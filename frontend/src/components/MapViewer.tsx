@@ -57,7 +57,7 @@ export default function MapViewer({ flightRoute, transitCoords }: Props) {
       {positions.length >= 2 && (
         <Polyline
           positions={positions}
-          pathOptions={{ color: "#6c5ce7", weight: 1.5, dashArray: "5,4" }}
+          pathOptions={{ color: "#2d3436", weight: 1.8 }}
         />
       )}
 
@@ -133,6 +133,7 @@ export default function MapViewer({ flightRoute, transitCoords }: Props) {
               <strong>DEP | {transitCoords?.departure?.designatedPoint}</strong>
             </Popup>
           </CircleMarker>
+
           {positions.length > 0 && (
             <Polyline
               positions={[
@@ -142,7 +143,7 @@ export default function MapViewer({ flightRoute, transitCoords }: Props) {
                 ],
                 first,
               ]}
-              pathOptions={{ color: "#fd79a8", weight: 1.5, dashArray: "4,4" }}
+              pathOptions={{ color: "#d63031", weight: 1.5, dashArray: "4,4" }}
             />
           )}
         </>
@@ -168,13 +169,14 @@ export default function MapViewer({ flightRoute, transitCoords }: Props) {
               <strong>ARR | {transitCoords?.arrival?.designatedPoint}</strong>
             </Popup>
           </CircleMarker>
+
           {positions.length > 0 && (
             <Polyline
               positions={[
                 last,
                 [transitCoords?.arrival?.lat!, transitCoords?.arrival?.lon!],
               ]}
-              pathOptions={{ color: "#00b894", weight: 1.5, dashArray: "4,4" }}
+              pathOptions={{ color: "#036e59", weight: 2, dashArray: "4,4" }}
             />
           )}
         </>

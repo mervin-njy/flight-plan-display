@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Coord, Waypoint } from "../models/Airway";
-import { resolveDuplicateByProximity } from "../utils/geoUtils";
+import { resolveDuplicateByProximity } from "../utils/geopointUtils";
 
 const api = axios.create({
   baseURL: process.env.API_URI,

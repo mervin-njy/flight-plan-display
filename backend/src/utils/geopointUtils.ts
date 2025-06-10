@@ -36,7 +36,7 @@ export function haversineDistance(a: Coord, b: Coord): number {
  */
 export function resolveDuplicateByProximity(
   candidates: Coord[],
-  reference: Coord
+  reference: Coord | null
 ): Coord | null {
   if (!reference || candidates.length <= 1) return null;
 
