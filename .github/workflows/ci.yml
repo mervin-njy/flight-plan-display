@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build-and-test:
+  test-backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,14 +17,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: latest
 
-      - name: Install dependencies
+      - name: Install backend dependencies
+        working-directory: ./backend
         run: npm ci
 
-      - name: Run tests
+      - name: Run backend tests
+        working-directory: ./backend
         run: npm test
 
-      - name: Lint (optional)
+      - name: Lint backend (optional)
+        working-directory: ./backend
         run: npm run lint
         continue-on-error: true
