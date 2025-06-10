@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: latest
+          node-version: lts/*
 
       - name: Install backend dependencies
         working-directory: ./backend
@@ -27,7 +27,7 @@ jobs:
         working-directory: ./backend
         run: npm test
 
-      - name: Lint backend (optional)
+      - name: Run linter
         working-directory: ./backend
         run: npm run lint
         continue-on-error: true
