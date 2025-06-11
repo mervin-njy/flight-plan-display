@@ -23,17 +23,17 @@ jobs:
       # Backend
       - name: Build backend image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-backend:latest ./backend
+          docker build -t ghcr.io/mervin-njy/${{ github.repository }}-backend:latest ./backend
 
       - name: Push backend image
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-backend:latest
+          docker push ghcr.io/mervin-njy/${{ github.repository }}-backend:latest
 
       # Frontend
       - name: Build frontend image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend:latest ./frontend
+          docker build -t ghcr.io/mervin-njy/${{ github.repository }}-frontend:latest ./frontend
 
       - name: Push frontend image
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-frontend:latest
+          docker push ghcr.io/mervin-njy/${{ github.repository }}-frontend:latest
