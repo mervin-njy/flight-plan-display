@@ -27,6 +27,10 @@ export default function App() {
 
     getAirways()
       .then(async (ids) => {
+        if (!Array.isArray(ids) || ids.length === 0) {
+          console.warn("No airways found");
+          return;
+        }
         const airways: Airway[] = ids.map((id) => ({ id }));
         setAirways(airways);
       })

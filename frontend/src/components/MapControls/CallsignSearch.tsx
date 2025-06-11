@@ -14,8 +14,9 @@ export default function CallsignSearch({
 }: Props) {
   // ===== State Management =====
   const [search, setSearch] = useState("");
+  const safeFlights = Array.isArray(flights) ? flights : [];
 
-  const filtered = flights.filter((f) =>
+  const filtered = safeFlights.filter((f) =>
     f.aircraftIdentification.toLowerCase().includes(search.toLowerCase())
   );
 
