@@ -22,7 +22,7 @@ The MVP focuses on data enrichment and visualization, handling real-world incons
 
 ---
 
-## 🧭 Architecture
+## Architecture
 
 ![Architecture Diagram](./images/architecture.svg)
 
@@ -40,11 +40,11 @@ The MVP focuses on data enrichment and visualization, handling real-world incons
   - Retrieves `routeElements` using flight ID
   - Appends departure and arrival points to form full route
   - Resolves each waypoint's coordinates from cache or upstream fallback
-  - Uses previous resolved context to disambiguate repeated fix names
+  - Uses previous resolved context to select closest coordinate amongst repeated geopoint names
 - **Rendering (Frontend)**:
   - Circle markers and popups for each valid point
-  - Lines for valid segments, dashed if invalid
-  - Table listing of parsed waypoints
+  - Lines for valid segments
+  - Table listing of parsed `waypoints`
 
 ---
 
