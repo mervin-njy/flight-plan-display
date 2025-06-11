@@ -1,4 +1,6 @@
-import { Coord } from "../models/Airway";
+import { RouteElement } from "../models/Flight";
+import { Coord, Waypoint } from "../models/Airway";
+import { getCachedGeopointCandidates } from "../services/geopointCache";
 
 /**
  * Calculate the great-circle (haversine) distance between two geographic coordinates.
@@ -54,4 +56,57 @@ export function resolveDuplicateByProximity(
   }
 
   return closest;
+}
+
+/**
+ * Resolve a waypoint by its code, using previous resolved waypoints and departure coordinates as references.
+ * This is useful for cases where the waypoint might have multiple candidates (e.g., duplicate fix/navaid names).
+ * @param code The waypoint code (e.g., fix or navaid identifier)
+ * @param type The type of waypoint ("fixes" or "navaids")
+ * @param previousResolved Previously resolved waypoints to use as reference
+ * @param depCoord Departure coordinates to use if no previous reference is found
+ * @returns The best matching waypoint, or null if no candidates are found
+ */
+export function resolveGeopointByPreviousRef(
+  code: string,
+  type: "fixes" | "navaids",
+  previousResolved: Waypoint[],
+  depCoord: Coord | null
+): Waypoint | null {
+  const candidates = getCachedGeopointCandidates(code, type);
+  if (!candidates || candidates.length === 0) return null;
+  if (candidates.length === 1) return candidates[0];
+
+  // Try to get most recent resolved geopoint with valid coords
+  let prevRef: Coord | null = null;
+
+  for (let i = previousResolved.length - 1; i >= 0; i--) {
+    const wp = previousResolved[i];
+    if (wp.lat != null && wp.lon != null) {
+      prevRef = { lat: wp.lat, lon: wp.lon };
+      break;
+    }
+  }
+
+  const reference = prevRef || depCoord;
+  if (!reference) return candidates[0];
+
+  // Compute closest match
+  let bestCandidate: Waypoint | null = null;
+  let minDist = Infinity;
+
+  for (const cand of candidates) {
+    if (cand.lat == null || cand.lon == null) continue;
+    const dist = haversineDistance(reference, {
+      lat: cand.lat,
+      lon: cand.lon,
+    });
+
+    if (dist < minDist) {
+      minDist = dist;
+      bestCandidate = cand;
+    }
+  }
+
+  return bestCandidate || candidates[0];
 }

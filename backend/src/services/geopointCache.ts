@@ -72,28 +72,6 @@ export function getCachedGeopointCandidates(
   return type === "fixes" ? fixesLookup[code] || [] : navaidsLookup[code] || [];
 }
 
-export function getResolvedGeopointCandidate(
-  code: string,
-  type: "fixes" | "navaids",
-  reference: Coord | null
-): Waypoint | null {
-  const candidates = getCachedGeopointCandidates(code, type);
-  if (candidates.length === 0) return null;
-  if (candidates.length === 1 || !reference) return candidates[0];
-
-  const coords = candidates
-    .filter((c) => c.lat != null && c.lon != null)
-    .map((c) => ({ lat: c.lat!, lon: c.lon! }));
-
-  const best = resolveDuplicateByProximity(coords, reference);
-  if (!best) return candidates[0];
-
-  return (
-    candidates.find((c) => c.lat === best.lat && c.lon === best.lon) ||
-    candidates[0]
-  );
-}
-
 export function getCachedAirportCandidates(code: string): Waypoint[] {
   return airportsLookup[code] || [];
 }

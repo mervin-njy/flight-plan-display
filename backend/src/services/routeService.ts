@@ -1,16 +1,9 @@
 import axios from "axios";
-import {
-  getResolvedGeopointCandidate,
-  getCachedAirportCandidates,
-} from "./geopointCache";
+import { getCachedAirportCandidates } from "./geopointCache";
 import { fetchFlights } from "./flightManager";
 import { Flight, RouteElement } from "../models/Flight";
 import { Waypoint } from "../models/Airway";
-
-const api = axios.create({
-  baseURL: process.env.API_URI,
-  headers: { apikey: process.env.API_KEY },
-});
+import { resolveGeopointByPreviousRef } from "../utils/geopointUtils";
 
 export async function getRouteElementsById(id: string): Promise<Waypoint[]> {
   const flights: Flight[] = await fetchFlights();
@@ -53,18 +46,24 @@ export async function getRouteElementsById(id: string): Promise<Waypoint[]> {
     let lon: number | null = null;
 
     if (code) {
-      const reference = waypoints[i - 1]?.lat
-        ? { lat: waypoints[i - 1].lat!, lon: waypoints[i - 1].lon! }
-        : depCoord || arrCoord || null;
+      const resolved = resolveGeopointByPreviousRef(
+        code,
+        type,
+        waypoints, // only resolved ones so far
+        depCoord
+      );
 
-      const resolved = getResolvedGeopointCandidate(code, type, reference);
       if (resolved) {
         lat = resolved.lat;
         lon = resolved.lon;
       }
     }
 
-    const displayType = type === "navaids" ? "navaid" : "fix";
+    const displayType = code
+      ? type === "navaids"
+        ? "navaid"
+        : "fix"
+      : elem.airwayType; // Use airwayType if no code (SID/STAR)
 
     waypoints.push({
       designatedPoint: code || "",
