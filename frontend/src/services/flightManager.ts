@@ -3,7 +3,7 @@ import type { Flight } from "../types/Flight";
 import type { Airway, Waypoint, TransitCoords } from "../types/Airway";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8888/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
 export const getFlights = async (): Promise<Flight[]> => {
