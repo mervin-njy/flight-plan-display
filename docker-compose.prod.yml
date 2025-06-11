@@ -1,6 +1,6 @@
 services:
   backend:
-    image: ghcr.io/mervin-njy/flight-plan-display/backend:latest
+    image: ghcr.io/mervin-njy/flight-plan-display-backend:latest
     ports:
       - "8888:8888"
     env_file:
@@ -9,7 +9,7 @@ services:
       - app-network
 
   frontend:
-    image: ghcr.io/mervin-njy/flight-plan-display/frontend:latest
+    image: ghcr.io/mervin-njy/flight-plan-display-frontend:latest
     ports:
       - "3000:3000"
     env_file:
