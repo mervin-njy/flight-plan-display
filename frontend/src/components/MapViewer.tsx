@@ -20,8 +20,9 @@ interface Props {
   transitCoords: TransitCoords | null;
 }
 export default function MapViewer({ flightRoute, transitCoords }: Props) {
-  // ===== DEP & ARR =====
-  const positions: LatLngBoundsExpression = flightRoute
+  const safeRoute = Array.isArray(flightRoute) ? flightRoute : [];
+
+  const positions: LatLngBoundsExpression = safeRoute
     .filter((wp) => wp.lat !== null && wp.lon !== null)
     .map((wp) => [wp.lat!, wp.lon!] as [number, number]);
 
