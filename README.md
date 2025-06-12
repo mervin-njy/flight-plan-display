@@ -8,6 +8,9 @@ The MVP focuses on data enrichment and visualization, handling real-world incons
 
 [Live deployment](http://ec2-13-238-128-63.ap-southeast-2.compute.amazonaws.com:3000/) can be accessed here.
 
+![github QR](./images/githubQR.svg)
+![webapp QR](./images/webappQR.svg)
+
 ---
 
 ## Features
