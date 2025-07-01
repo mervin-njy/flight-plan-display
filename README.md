@@ -6,11 +6,6 @@ This project visualizes historical aviation flight paths, resolving waypoints an
 
 The MVP focuses on data enrichment and visualization, handling real-world inconsistencies such as duplicate or missing fix names, and caching resolved coordinates to improve performance. This demonstrates a full CI/CD process, including containerization, testing and deployment.
 
-[Live deployment](http://ec2-13-238-128-63.ap-southeast-2.compute.amazonaws.com:3000/) can be accessed here.
-
-<img src="./images/githubQR.svg" alt="githubQR" width="200"/>
-<img src="./images/webappQR.svg" alt="webappQR" width="200"/>
-
 ---
 
 ## Features
@@ -159,11 +154,3 @@ The MVP focuses on data enrichment and visualization, handling real-world incons
 - Redis-based persistent caching layer
 - Improved fix disambiguation via geo proximity
 - Alternate route suggestion via A\* search or fallback mapping
-
----
-
-## Further Questions
-
-- Are there better ways to handle partial or missing coordinate chains?
-- Any suggestions/best practices to make the best use of Airways?
-- Any testing libraries or coverage metrics you'd recommend?
